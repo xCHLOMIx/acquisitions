@@ -1,0 +1,228 @@
+# Git Ignore Rules for Docker & Environment Setup
+# Add these lines to your .gitignore file
+
+# ============================================================================
+# Environment Files
+# ============================================================================
+# Never commit real secrets and credentials
+.env
+.env.local
+.env.production
+.env.*.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# Keep examples and development defaults (safe to commit)
+# .env.example
+# .env.development
+
+# ============================================================================
+# Docker
+# ============================================================================
+# Docker build artifacts
+docker-compose.override.yml  # Local overrides
+docker-compose.local.yml     # Local customizations
+
+# Docker volumes (local data)
+volume-data/
+postgres-data/
+neon-data/
+
+# ============================================================================
+# Node.js
+# ============================================================================
+node_modules/
+npm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ============================================================================
+# IDE & Editor
+# ============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+
+# ============================================================================
+# Build Artifacts
+# ============================================================================
+dist/
+build/
+coverage/
+.next/
+out/
+.cache/
+*.tsbuildinfo
+
+# ============================================================================
+# Database
+# ============================================================================
+# Drizzle migrations (keep these)
+# drizzle/
+
+# Database snapshots (local)
+*.sql
+!drizzle/*.sql
+
+# ============================================================================
+# Logs
+# ============================================================================
+logs/
+*.log
+.pnpm-debug.log*
+
+# ============================================================================
+# OS Files
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# ============================================================================
+# Temporary Files
+# ============================================================================
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# ============================================================================
+# Platform-Specific
+# ============================================================================
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.directory
+
+# ============================================================================
+# Docker-Specific
+# ============================================================================
+# Keep dockerfile, compose files, but not override configs
+# Dockerfile              (committed)
+# docker-compose.dev.yml  (committed)
+# docker-compose.prod.yml (committed)
+# docker-compose.override.yml (NOT committed - local overrides)
+# .dockerignore          (committed)
+
+# ============================================================================
+# Kubernetes & Helm (if applicable)
+# ============================================================================
+# k8s/                    (committed)
+# helm/                   (committed)
+# Keep manifests but ignore overrides
+overlays/
+kustomization.yaml.local
+
+# ============================================================================
+# Sensitive Files (Belt & Suspenders)
+# ============================================================================
+# .env files (double-safe)
+.env.*
+!.env.example
+!.env.development
+!.env.*.example
+
+# Secrets
+secrets/
+*.key
+*.pem
+*.crt
+*.jks
+*.p12
+.ssh/
+
+# AWS
+.aws/
+aws-credentials
+
+# GCP
+.gcp/
+google-credentials.json
+
+# ============================================================================
+# CI/CD
+# ============================================================================
+.github/secrets/
+.gitlab/secrets/
+.circleci/secrets/
+
+# ============================================================================
+# Additional Safety
+# ============================================================================
+# Files containing sensitive information
+*-credentials*
+*-secret*
+*-password*
+*-token*
+
+# ============================================================================
+# Exception Rules (Files to Keep)
+# ============================================================================
+# Use ! to keep specific files that would otherwise be ignored
+
+# Keep environment example files
+!.env.example
+!.env.development
+!.env.local.example
+!.env.production.example
+
+# Keep Docker files
+!Dockerfile
+!docker-compose.*.yml
+!.dockerignore
+
+# Keep K8s files
+!k8s/
+!k8s/**
+
+# Keep Helm files
+!helm/
+!helm/**
+
+# Keep migrations
+!drizzle/
+!drizzle/**/*.sql
+
+# Keep documentation
+!DOCKER_SETUP.md
+!DOCKER_README.md
+!QUICKSTART.md
+!DOCKER_REFERENCE.md
+!SETUP_SUMMARY.md
+
+# Keep CI/CD
+!.github/
+!.github/workflows/
+
+# ============================================================================
+# Notes
+# ============================================================================
+# To verify sensitive files aren't committed:
+# git status --ignored
+#
+# To remove already-committed sensitive files:
+# git rm --cached .env.production
+# echo '.env.production' >> .gitignore
+# git commit -m "Remove sensitive file from tracking"
+#
+# To verify no secrets in git history:
+# git log -S 'DATABASE_URL' --oneline

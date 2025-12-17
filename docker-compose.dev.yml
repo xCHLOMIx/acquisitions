@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  neon-local:
+    image: neondatabase/neon:latest
+    container_name: neon-local-dev
+    environment:
+      # Neon Local runs on port 5432 by default
+      POSTGRES_HOST: 0.0.0.0
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: neondb
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - neon-data:/data
+    networks:
+      - acquisitions-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acquisitions-app-dev
+    depends_on:
+      neon-local:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://postgres:postgres@neon-local:5432/neondb
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: node --watch src/index.js
+    networks:
+      - acquisitions-network
+
+volumes:
+  neon-data:
+
+networks:
+  acquisitions-network:
+    driver: bridge

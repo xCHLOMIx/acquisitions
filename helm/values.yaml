@@ -1,0 +1,101 @@
+# Helm Values for Kubernetes Deployment
+# Path: helm/values.yaml
+
+# Global settings
+global:
+  environment: production
+  domain: yourdomain.com
+
+# Application configuration
+app:
+  name: acquisitions
+  namespace: acquisitions
+
+  image:
+    repository: ghcr.io/your-org/acquisitions
+    tag: latest
+    pullPolicy: Always
+
+  replicaCount: 3
+
+  port: 3000
+
+  # Resource limits
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+
+  # Health checks
+  healthCheck:
+    enabled: true
+    path: /health
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+# Database configuration (Neon Cloud)
+database:
+  # Use secrets for URL
+  url: # Injected via secrets
+  ssl: true
+  pool:
+    max: 20
+    min: 5
+
+# Environment variables
+env:
+  NODE_ENV: production
+  LOG_LEVEL: info
+  CORS_ORIGIN: https://yourdomain.com
+
+# Secrets (inject these)
+secrets:
+  DATABASE_URL: # Set via helm --set or values file
+  JWT_SECRET: # Set via helm --set or values file
+  ARCJET_KEY: # Set via helm --set or values file
+
+# Service configuration
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 3000
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+  hosts:
+    - host: yourdomain.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: acquisitions-tls
+      hosts:
+        - yourdomain.com
+
+# Autoscaling
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Monitoring
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+
+# Logging
+logging:
+  level: info
+  format: json
