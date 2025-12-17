@@ -12,9 +12,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: neondb
     ports:
-      - "5432:5432"
+      - '5432:5432'
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      test: ['CMD', 'pg_isready', '-U', 'postgres', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -36,7 +36,7 @@ services:
       DATABASE_URL: postgres://postgres:postgres@neon-local:5432/neondb
       PORT: 3000
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - .:/app
       - /app/node_modules

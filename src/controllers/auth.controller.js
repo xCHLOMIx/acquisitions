@@ -12,7 +12,7 @@ export const signup = async (req, res, next) => {
     if (!validationResult.success) {
       return res.status(400).json({
         error: 'Validation failed',
-        details: formatValidationError(validationResult.error)
+        details: formatValidationError(validationResult.error),
       });
     }
 
@@ -20,14 +20,23 @@ export const signup = async (req, res, next) => {
 
     const user = await createUser({ name, email, password, role });
 
-    const token = jwttoken.sign({ id: user.id, email: user.email, role: user.role });
+    const token = jwttoken.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     cookies.set(res, 'token', token);
 
     logger.info(`User signed up: ${email}`);
     return res.status(201).json({
       message: 'User created successfully',
-      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     logger.error('Signup error', error);
@@ -38,7 +47,6 @@ export const signup = async (req, res, next) => {
 
     next(error);
   }
-
 };
 
 export const signin = async (req, res, next) => {
@@ -48,7 +56,7 @@ export const signin = async (req, res, next) => {
     if (!validationResult.success) {
       return res.status(400).json({
         error: 'Validation failed',
-        details: formatValidationError(validationResult.error)
+        details: formatValidationError(validationResult.error),
       });
     }
 
@@ -56,14 +64,23 @@ export const signin = async (req, res, next) => {
 
     const user = await authenticateUser(email, password);
 
-    const token = jwttoken.sign({ id: user.id, email: user.email, role: user.role });
+    const token = jwttoken.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     cookies.set(res, 'token', token);
 
     logger.info(`User signed in: ${email}`);
     return res.status(200).json({
       message: 'User signed in successfully',
-      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     logger.error('Sign in error', error);
@@ -78,7 +95,6 @@ export const signin = async (req, res, next) => {
 
     next(error);
   }
-
 };
 
 export const signout = async (req, res, next) => {
@@ -93,11 +109,10 @@ export const signout = async (req, res, next) => {
 
     logger.info('User signed out');
     return res.status(200).json({
-      message: 'User signed out successfully'
+      message: 'User signed out successfully',
     });
   } catch (error) {
     logger.error('Sign out error', error);
     next(error);
   }
-
 };
